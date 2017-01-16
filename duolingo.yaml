@@ -1,0 +1,11 @@
+sender_address: your@email.address.here
+account:
+    username: username
+    password: password
+
+status:
+    send_status: true
+    send_friends: true
+
+shop:
+    buy_streak: true
