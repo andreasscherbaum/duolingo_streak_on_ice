@@ -22,3 +22,6 @@ DEBUG: going to buy 'Streak on Ice' extension ...
 INFO: bought streak extension for: <your username here>
 ```
 
+## Dependencies
+
+This script requires the ["Duolingo API"](https://github.com/KartikTalwar/Duolingo) present in the script working directory.
