@@ -288,7 +288,13 @@ user_streak_info = lingo.get_streak_info()
 
 if (config.configfile['shop']['buy_streak'] is True):
     logging.debug("going to buy 'Streak on Ice' extension ...")
-    if (lingo.buy_streak_freeze() is True):
-        logging.info("bought streak extension for: " + str(user_info['username']))
+    try:
+        if (lingo.buy_streak_freeze() is True):
+            logging.info("bought streak extension for: " + str(user_info['username']))
+    except Exception:
+        # not possible to buy item (probably already equipped)
+        pass
+    else:
+        print("Unknown exception!")
 
 
