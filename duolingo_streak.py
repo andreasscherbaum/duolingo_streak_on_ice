@@ -283,6 +283,8 @@ user_info = lingo.get_user_info()
 user_settings = lingo.get_settings()
 user_friends = lingo.get_friends()
 user_streak_info = lingo.get_streak_info()
+# the field "streak_extended_today" is only telling us if the user extended the streak today
+# it's not telling us if the user is equipped with a streak on ice
 
 
 
@@ -291,10 +293,21 @@ if (config.configfile['shop']['buy_streak'] is True):
     try:
         if (lingo.buy_streak_freeze() is True):
             logging.info("bought streak extension for: " + str(user_info['username']))
-    except Exception:
-        # not possible to buy item (probably already equipped)
+    except duolingo.AlreadyHaveStoreItemException:
+        # not possible to buy item (already equipped)
         pass
-    else:
-        print("Unknown exception!")
+    except Exception:
+        logging.error("Unknown exception!")
+        sys.exit(1)
+
+    try:
+        if (lingo.buy_item('streak_freeze', 'en') is True):
+            logging.info("bought streak extension for: " + str(user_info['username']))
+    except duolingo.AlreadyHaveStoreItemException:
+        # not possible to buy item (already equipped)
+        pass
+    except Exception:
+        logging.error("Unknown exception!")
+        sys.exit(1)
 
 
