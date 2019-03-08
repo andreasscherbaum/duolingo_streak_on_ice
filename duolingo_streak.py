@@ -311,3 +311,9 @@ if (config.configfile['shop']['buy_streak'] is True):
         sys.exit(1)
 
 
+if (config.configfile['status']['send_status'] is True):
+    # re-read streak status
+    user_streak_info = lingo.get_streak_info()
+    logging.debug("going to send streak status information ...")
+    logging.info("Streak extended today: %s" % (str(user_streak_info['streak_extended_today'])))
+    logging.info("Streak days: %s" % (str(user_streak_info['site_streak'])))
