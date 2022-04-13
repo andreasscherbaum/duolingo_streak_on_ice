@@ -36,6 +36,7 @@ logging.basicConfig(level = logging.INFO,
 		    format = '%(levelname)s: %(message)s')
 # avoid info messages from the "Requests" module
 logging.getLogger('requests').setLevel(logging.ERROR)
+pp = pprint.PrettyPrinter(indent=4)
 
 
 
@@ -277,18 +278,26 @@ config.load_config()
 
 
 lingo = duolingo.Duolingo(config.configfile['account']['username'], password = config.configfile['account']['password'])
+# workaround
+num_streak_on_ice = lingo.__dict__['user_data'].__dict__['tracking_properties']['num_item_streak_freeze']
 
 
 user_info = lingo.get_user_info()
 user_settings = lingo.get_settings()
-user_friends = lingo.get_friends()
+# getting friends is currently broken
+# https://github.com/KartikTalwar/Duolingo/issues/112
+# the variable $user_friends is currently not in use
+#user_friends = lingo.get_friends()
 user_streak_info = lingo.get_streak_info()
+#pp.pprint(user_streak_info)
 # the field "streak_extended_today" is only telling us if the user extended the streak today
 # it's not telling us if the user is equipped with a streak on ice
+user_xp_progress = lingo.get_daily_xp_progress()
+#pp.pprint(user_xp_progress)
 
 
 
-if (config.configfile['shop']['buy_streak'] is True):
+if (config.configfile['shop']['buy_streak'] is True and num_streak_on_ice < 2):
     logging.debug("going to buy 'Streak on Ice' extension ...")
     try:
         if (lingo.buy_streak_freeze() is True):
@@ -314,6 +323,12 @@ if (config.configfile['shop']['buy_streak'] is True):
 if (config.configfile['status']['send_status'] is True):
     # re-read streak status
     user_streak_info = lingo.get_streak_info()
+    user_xp_progress = lingo.get_daily_xp_progress()
     logging.debug("going to send streak status information ...")
-    logging.info("Streak extended today: %s" % (str(user_streak_info['streak_extended_today'])))
+    if (user_streak_info['streak_extended_today'] == True):
+        logging.info("Streak extended today: yes")
+    else:
+        logging.info("Streak extended today: no")
     logging.info("Streak days: %s" % (str(user_streak_info['site_streak'])))
+    logging.info("XP today: %s (goal: %s)" % (str(user_xp_progress['xp_today']), str(user_xp_progress['xp_goal'])))
+    logging.info("Number streaks on ice: %s" % (str(num_streak_on_ice)))
